@@ -625,6 +625,7 @@ public class InteractiveLineGraphView extends View {
 	 * point is found, the "dest" argument is set to the point and
 	 * this function returns true. Otherwise, this function returns false and "dest" is unchanged.
 	 */
+	// ポイントがグラフの表示領域に表示されてるかテストする.グラフ領域内をだぶるタップしたのみ拡大する時などにつかう.
 	private boolean hitTest(float x, float y, PointF dest) {
 		if (!mContentRect.contains((int) x, (int) y)) {
 			return false;
@@ -641,6 +642,7 @@ public class InteractiveLineGraphView extends View {
 	}
 
 	@Override
+	// *重要* このカスタムViewがタップされた時に呼ばれるコールバック関数.
 	public boolean onTouchEvent(MotionEvent event) {
 		boolean retVal = mScaleGestureDetector.onTouchEvent(event);
 		retVal = mGestureDetector.onTouchEvent(event) || retVal;
@@ -650,6 +652,7 @@ public class InteractiveLineGraphView extends View {
 	/**
 	 * The scale listener, used for handling multi-finger scale gestures.
 	 */
+	// *重要* ピンチイン、ピンチアウトを検出するリスナー.
 	private final ScaleGestureDetector.OnScaleGestureListener mScaleGestureListener = new ScaleGestureDetector.SimpleOnScaleGestureListener() {
 		/**
 		 * This is the active focal point in terms of the viewport. Could be a local
@@ -702,6 +705,7 @@ public class InteractiveLineGraphView extends View {
 	 * Ensures that current viewport is inside the viewport extremes defined by {@link #AXIS_X_MIN}, {@link #AXIS_X_MAX}
 	 * , {@link #AXIS_Y_MIN} and {@link #AXIS_Y_MAX}.
 	 */
+	// グラフの領域がスクロールによって移動可能領域外に移動しないようにする.
 	private void constrainViewport() {
 		mCurrentViewport.left = Math.max(AXIS_X_MIN, mCurrentViewport.left);
 		mCurrentViewport.top = Math.max(AXIS_Y_MIN, mCurrentViewport.top);
@@ -715,6 +719,7 @@ public class InteractiveLineGraphView extends View {
 	 * The gesture listener, used for handling simple gestures such as double touches, scrolls,
 	 * and flings.
 	 */
+	// *重要* ダブルタップ、スクロールなどのジェスチャーのリスナ.
 	private final GestureDetector.SimpleOnGestureListener mGestureListener = new GestureDetector.SimpleOnGestureListener() {
 		@Override
 		public boolean onDown(MotionEvent e) {
@@ -789,6 +794,7 @@ public class InteractiveLineGraphView extends View {
 		}
 	};
 
+	// *重要* スクロール時のエッジエフェクトをやめる.
 	private void releaseEdgeEffects() {
 		mEdgeEffectLeftActive = mEdgeEffectTopActive
 				= mEdgeEffectRightActive
@@ -800,6 +806,7 @@ public class InteractiveLineGraphView extends View {
 		mEdgeEffectBottom.onRelease();
 	}
 
+	// *重要* 「フリング」（指を大きくスワイプさせて、指が離れてもスクロールが続く操作）させる
 	private void fling(int velocityX, int velocityY) {
 		releaseEdgeEffects();
 		// Flings use math in pixels (as opposed to math based on the viewport).
@@ -828,6 +835,7 @@ public class InteractiveLineGraphView extends View {
 	 * is zoomed in 200% in both directions, the returned size will be twice as large horizontally
 	 * and vertically.
 	 */
+	// ここ以降の説明　これから追記
 	private void computeScrollSurfaceSize(Point out) {
 		out.set(
 				(int) (mContentRect.width() * (AXIS_X_MAX - AXIS_X_MIN)
